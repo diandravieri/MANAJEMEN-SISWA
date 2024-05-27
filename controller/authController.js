@@ -1,5 +1,4 @@
 const { Siswa } = require('../models');
-const generateToken = require('../config/generateToken');
 const { users } = require('../models');
 const { errorResponse, successResponse, internalErrorResponse, notFoundResponse } = require('../config/responseJson');
 
