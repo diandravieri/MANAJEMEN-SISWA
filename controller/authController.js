@@ -1,6 +1,6 @@
 const { Siswa } = require('../models');
-const { users } = require('../models');
 const { errorResponse, successResponse, internalErrorResponse, notFoundResponse } = require('../config/responseJson');
+const { Sequelize } = require('sequelize');
 
 async function tambahSiswa(req, res) {
     try {
@@ -25,13 +25,8 @@ async function ubahSiswa(req, res) {
         siswa.kelas = kelas;
         siswa.nilai = nilai;
         await siswa.save();
-        successResponse(res, 'Data siswa berhasil diubah', siswa, 200);
 
-        const token = generateToken(users);
-        successResponse(res, 'Logged in successfully', {
-            user: userResponse,
-            token
-        }, 200);
+        successResponse(res, 'Data siswa berhasil diubah', { siswa }, 200);
     } catch (error) {
         internalErrorResponse(res, error);
     }
@@ -51,7 +46,6 @@ async function hapusSiswa(req, res) {
     }
 }
 
-// Fungsi untuk mencari siswa berdasarkan nama, kelas, atau id
 async function cariSiswa(req, res) {
     try {
         const { nama, kelas, id } = req.query;
@@ -79,4 +73,26 @@ async function cariSiswa(req, res) {
     }
 }
 
-module.exports = { tambahSiswa, ubahSiswa, hapusSiswa, cariSiswa };
+async function statistikSiswa(req, res) {
+    try {
+        const siswaPerKelas = await Siswa.findAll({
+            attributes: [
+                'kelas',
+                [Sequelize.fn('COUNT', Sequelize.col('id')), 'jumlahSiswa'],
+                [Sequelize.fn('AVG', Sequelize.col('nilai')), 'rataRataNilai']
+            ],
+            group: ['kelas']
+        });
+
+        if (siswaPerKelas.length === 0) {
+            return res.status(404).json({ success: false, message: 'Tidak ada data siswa ditemukan' });
+        }
+
+        res.json({ success: true, data: siswaPerKelas });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal mengambil data statistik siswa' });
+    }
+}   
+
+
+module.exports = { tambahSiswa, ubahSiswa, hapusSiswa, cariSiswa, statistikSiswa };
