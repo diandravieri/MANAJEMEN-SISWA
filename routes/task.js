@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { tambahSiswa, ubahSiswa, hapusSiswa, cariSiswa, statistikSiswa } = require('../controller/authController');
+const { tambahSiswa, ubahSiswa, hapusSiswa, cariSiswa, statistikSiswa, tampilkanSeluruhSiswa } = require('../controller/authController');
 
 // Rute untuk menambahkan siswa baru
 router.post('/create', tambahSiswa);
@@ -17,4 +17,6 @@ router.get('/search', cariSiswa);
 // Rute untuk menampilkan statistik siswa
 router.get('/statistik', statistikSiswa);
 
+// Rute untuk menampilkan seluruh siswa
+router.get('/all', tampilkanSeluruhSiswa);
 module.exports = router;

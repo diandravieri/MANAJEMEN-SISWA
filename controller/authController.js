@@ -92,7 +92,20 @@ async function statistikSiswa(req, res) {
     } catch (error) {
         res.status(500).json({ success: false, message: 'Gagal mengambil data statistik siswa' });
     }
-}   
+}
+
+async function tampilkanSeluruhSiswa(req, res) {
+    try {
+        const siswa = await Siswa.findAll();
+        if (siswa.length === 0) {
+            return res.status(404).json({ success: false, message: 'Tidak ada siswa ditemukan' });
+        }
+        res.json({ success: true, data: siswa });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal mengambil data siswa' });
+    }
+}
 
 
-module.exports = { tambahSiswa, ubahSiswa, hapusSiswa, cariSiswa, statistikSiswa };
+
+module.exports = { tambahSiswa, ubahSiswa, hapusSiswa, cariSiswa, statistikSiswa, tampilkanSeluruhSiswa };
